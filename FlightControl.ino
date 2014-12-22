@@ -58,12 +58,6 @@ void flightControl() {
       Serial.println(rxYaw);
     #endif
     
-    #ifdef TEST_ROLL
-      Serial.print(millis()); Serial.print('\t');
-      Serial.print(rxRoll);   Serial.print('\t');
-      Serial.println(roll);
-    #endif
-    
     #if defined(PID_CONTROL)
       // compute controller output values
       setRoll =  (int)rollPID.compute((float)rxRoll, roll);
