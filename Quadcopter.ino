@@ -70,6 +70,63 @@ float pitch, roll;
 #endif
 
 // ============================================================================
+// ===                           PID Class                                  ===
+// ============================================================================
+
+class PID {
+  // General purpose PID controller
+    unsigned long now, dt, lastTime;
+    float error, lastErr, errSum;
+    float P, I, D;
+    float kp, ki, kd;
+    
+  public:
+  PID(float set_kp, float set_ki, float set_kd){
+    kp = set_kp;
+    ki = set_ki;
+    kd = set_kd;
+  }
+  
+  float compute(float setPoint, float input){
+    now = micros();
+    dt = now - lastTime;
+    
+    if(dt >= PID_SMPL_TIME){
+      error = setPoint - input;
+      errSum += error;
+      
+      P = kp * error;
+      
+      /*
+      When elapsed time is greater than 10 times the sample rate,
+      omit the D term which could cause a large output spike. Also 
+      reset errSum to zero the I term. This prevents strange behavior
+      when the throttle is lowerer below cutoff and then raised again. 
+      */
+      if(dt > 10*PID_SMPL_TIME){
+        D = 0;
+        errSum = 0;
+      }
+      else{
+      D = kd * (error - lastErr);
+      }
+      
+      I = constrain(ki*errSum, -I_MAX, I_MAX);
+      
+      lastErr = error;
+      lastTime = now;
+    }
+    
+    return (P + I + D);
+  }
+};
+
+// create each PID object
+PID yawPID(YAW_PID_KP, YAW_PID_KI, YAW_PID_KD);
+PID rollPID(ROLL_PID_KP, ROLL_PID_KI, ROLL_PID_KD);
+PID pitchPID(PITCH_PID_KP, PITCH_PID_KI, PITCH_PID_KD);
+
+// ============================================================================
 // ===                              SETUP                                   ===
 // ============================================================================
 

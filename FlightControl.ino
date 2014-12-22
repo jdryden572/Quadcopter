@@ -66,9 +66,15 @@ void flightControl() {
     
     #if defined(PID_CONTROL)
       // compute controller output values
-      setRoll  = (int)computeRollPID((float)rxRoll);
-      setPitch = (int)computePitchPID((float)rxPitch);
-      setYaw   = (int)computeYawPID((float)rxYaw);
+      setRoll =  (int)rollPID.compute((float)rxRoll, roll);
+      setPitch = (int)pitchPID.compute((float)rxPitch, pitch);
+      setYaw =   (int)yawPID.compute((float)rxYaw, gyroZ);
+      
+      #ifdef PRINT_PID_ROLL
+        Serial.print(rollPID.P); Serial.print('\t');
+        Serial.print(rollPID.I); Serial.print('\t');
+        Serial.println(rollPID.D);
+      #endif
     
     #elif defined(RX_MIXING_ONLY)
       // Mixes Rx outputs only, no PID control
