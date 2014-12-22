@@ -18,9 +18,9 @@ QuadPID::QuadPID(float set_kp, float set_ki, float set_kd, int sampleTime, int m
 float QuadPID::compute(float setPoint, float input)
 {
 	_now = micros();
-	dt = now - lastTime;
+	_dt = _now - _lastTime;
 	
-	if(dt >= _sampleTime){
+	if(_dt >= _sampleTime){
 		_error = setPoint - input;
 		_errSum += _error;
 		
@@ -32,7 +32,7 @@ float QuadPID::compute(float setPoint, float input)
 		reset errSum to zero the I term. This prevents strange behavior
 		when the throttle is lowerer below cutoff and then raised again. 
 		*/
-		if(dt > 10*_sampleTime){
+		if(_dt > 10*_sampleTime){
 			D = 0;
 			_errSum = 0;
 		}
@@ -40,7 +40,7 @@ float QuadPID::compute(float setPoint, float input)
 			D = _kd * (_error - _lastErr);
 		}
 		
-		I = constrain(-ki*_errSum, -_maxI, _maxI);
+		I = constrain(_ki*_errSum, -_maxI, _maxI);
 		
 		_lastErr = _error;
 		_lastTime = _now;

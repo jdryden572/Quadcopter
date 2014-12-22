@@ -17,7 +17,7 @@
 // ===                             PID DEFS                                 ===
 // ============================================================================
 
-#define PID_SMPL_TIME 1000/PID_SMPLRT
+#define PID_SMPL_TIME 1000000/PID_SMPLRT
 
 #define ROLL_PID_KP KP
 #define ROLL_PID_KI KI / PID_SMPLRT
