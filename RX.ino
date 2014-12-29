@@ -9,6 +9,7 @@ void rxInit(){
   PCintPort::attachInterrupt(RX_PIN_CH1, chan1, CHANGE);
   PCintPort::attachInterrupt(RX_PIN_CH2, chan2, CHANGE);
   PCintPort::attachInterrupt(RX_PIN_CH3, chan3, CHANGE);
+  PCintPort::attachInterrupt(RX_PIN_CH4, chan4, CHANGE);
 }
 
 void rxGetNewVals(){
@@ -20,7 +21,7 @@ void rxGetNewVals(){
   byte updateFlags = updateFlagsShared;  // take local copy of update flags
    
   // copy the value of each channel into the buffer if it has been updated
-  for (int i=0; i<4; i++){
+  for (int i=0; i<NUMBER_CHANNELS; i++){
     // use bitshift to check if the flag has been raised
     if (updateFlagsShared & 1<<i){
       // check if value is reasonable. 
@@ -65,6 +66,14 @@ void rxMapping(byte updateFlags){
     rxYaw   = (float)rxVal[CHANNEL_YAW]*YAW_RX_MULT - YAW_RX_SUB;
     rxYaw   = constrain(rxYaw, -YAW_A_MAX, YAW_A_MAX);
   }
+  if(updateFlags & 1<<CHANNEL_AUX){  // New aux
+    if(rxVal[CHANNEL_AUX] > 1500) { 
+      rateModeSwitch = true; 
+    }
+    else {
+      rateModeSwitch = false; 
+    }
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,8 +95,6 @@ void chan0()
     updateFlagsShared |= RX_FLAG_CH0;
   }
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void chan1()
 // Function attached to RX_PIN_CH1 interrupt.
@@ -140,5 +147,23 @@ void chan3()
     rxValShared[3] = micros() - rxStart[3];
     rxStart[3] = 0;
     updateFlagsShared |= RX_FLAG_CH3;
+  }
+}
+
+void chan4()
+// Function attached to RX_PIN_CH4 interrupt.
+// Measures pulse lengths of input servo signals.
+{
+  // if pin is high, new pulse. Record time
+  if (digitalRead(RX_PIN_CH4) == HIGH)
+  {
+    rxStart[4] = micros();
+  }
+  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
+  else
+  {
+    rxValShared[4] = micros() - rxStart[4];
+    rxStart[4] = 0;
+    updateFlagsShared |= RX_FLAG_CH4;
   }
 }

@@ -25,7 +25,7 @@
 //#define TEST_ROLL             // print roll setpoint and measured roll angle
 //#define LOOP_TIMER            // print loop times
 
-//#define USE_SERIAL            // enable Serial even if no debugging selected
+#define USE_SERIAL            // enable Serial even if no debugging selected
 
 // *************Alternate Motor Control***************
 
@@ -121,12 +121,14 @@ default clock speed) a reading takes approx 1200us.
 #define RX_PIN_CH1 7
 #define RX_PIN_CH2 8
 #define RX_PIN_CH3 4
+#define RX_PIN_CH4 5
 
 // which channel corresponds to which input
 #define CHANNEL_THROTTLE 0
 #define CHANNEL_ROLL 1
 #define CHANNEL_PITCH 2
 #define CHANNEL_YAW 3
+#define CHANNEL_AUX 4
 
 // ============================================================================
 // ===                           LED CONFIG                                 ===

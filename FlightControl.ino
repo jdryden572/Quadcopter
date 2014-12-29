@@ -32,7 +32,8 @@ void flightControl() {
   Serial.print(rxVal[CHANNEL_THROTTLE]); Serial.print('\t'); 
   Serial.print(rxVal[CHANNEL_ROLL]);     Serial.print('\t');
   Serial.print(rxVal[CHANNEL_PITCH]);    Serial.print('\t');
-  Serial.println(rxVal[CHANNEL_YAW]);
+  Serial.print(rxVal[CHANNEL_YAW]);      Serial.print('\t');
+  Serial.println(rxVal[CHANNEL_AUX]);
   #endif
 
 
@@ -64,7 +65,7 @@ void flightControl() {
       setPitch = (int)pitchPID.compute((float)rxPitch, pitch);
       setYaw =   (int)yawPID.compute((float)rxYaw, gyroZ);
       
-      #ifdef PRINT_PID_ROLL
+      #ifdef DEBUG_PID_ROLL
         Serial.print(rollPID.P); Serial.print('\t');
         Serial.print(rollPID.I); Serial.print('\t');
         Serial.println(rollPID.D);

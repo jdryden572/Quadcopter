@@ -123,13 +123,14 @@
 // ===                             RX DEFS                                  ===
 // ============================================================================
 
-#define NUMBER_CHANNELS 4
+#define NUMBER_CHANNELS 5
 
 // define flags for channels in updateFlagsShared
-#define RX_FLAG_CH0 1  //B00000001
-#define RX_FLAG_CH1 2  //B00000010
-#define RX_FLAG_CH2 4  //B00000100
-#define RX_FLAG_CH3 8  //B00001000
+#define RX_FLAG_CH0 1<<0  //B00000001
+#define RX_FLAG_CH1 1<<1  //B00000010
+#define RX_FLAG_CH2 1<<2  //B00000100
+#define RX_FLAG_CH3 1<<3  //B00001000
+#define RX_FLAG_CH4 1<<4  //B00010000
 
 #define THROTTLE_WMIN MOTOR_ARM_START
 #define THROTTLE_WMAX MOTOR_MAX_LEVEL
