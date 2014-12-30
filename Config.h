@@ -38,9 +38,13 @@
 // ===                          PID CONFIG                                  ===
 // ============================================================================
 
-#define KP 1.5
-#define KD 0.3
-#define KI 0
+#define RATE_KP 1
+#define RATE_KD 0
+#define RATE_KI 0
+
+#define ANG_KP 1.5
+#define ANG_KD 0.3
+#define ANG_KI 0
 
 #define YAW_KP 3
 #define YAW_KD 0
@@ -54,6 +58,7 @@
 #define PITCH_A_MAX 20.0  // Max pitch angle setpoint in deg. 
 #define YAW_A_MAX 60.0    // Max yaw rate setpoint in deg/s.
 
+#define RATE_RX_SCALE 3   // Multiplier for angle setpoint, for use in rate mode
 
 
 // ============================================================================

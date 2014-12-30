@@ -68,9 +68,12 @@ float pitch, roll;
 #endif
 
 // create each PID object
-QuadPID yawPID(YAW_PID_KP, YAW_PID_KI, YAW_PID_KD, PID_SMPL_TIME, I_MAX);
-QuadPID rollPID(ROLL_PID_KP, ROLL_PID_KI, ROLL_PID_KD, PID_SMPL_TIME, I_MAX);
-QuadPID pitchPID(PITCH_PID_KP, PITCH_PID_KI, PITCH_PID_KD, PID_SMPL_TIME, I_MAX);
+QuadPID yawRatePID(RATE_YAW_KP, RATE_YAW_KI, RATE_YAW_KD, PID_SMPL_TIME, I_MAX);
+QuadPID rollRatePID(RATE_ROLL_KP, RATE_ROLL_KI, RATE_ROLL_KD, PID_SMPL_TIME, I_MAX);
+QuadPID pitchRatePID(RATE_PITCH_KP, RATE_PITCH_KI, RATE_PITCH_KD, PID_SMPL_TIME, I_MAX);
+
+QuadPID rollAnglePID(ANG_ROLL_KP, ANG_ROLL_KI, ANG_ROLL_KD, PID_SMPL_TIME, I_MAX);
+QuadPID pitchAnglePID(ANG_PITCH_KP, ANG_PITCH_KI, ANG_PITCH_KD, PID_SMPL_TIME, I_MAX);
 
 // ============================================================================
 // ===                              SETUP                                   ===
