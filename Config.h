@@ -16,7 +16,7 @@
 //#define DEBUG_ANGLES          // print roll and pitch
 //#define DEBUG_SENSOR_RAW      // print raw sensor vals
 //#define DEBUG_MAG             // print mag readings
-//#define DEBUG_RX_RAW          // print raw Rx channel values
+#define DEBUG_RX_RAW          // print raw Rx channel values
 //#define DEBUG_RX_ANGLES       // print mapped Rx setpoints
 //#define DEBUG_PID_ROLL        // print roll PID output
 //#define DEBUG_PID_PITCH       // print pitch PID output
@@ -119,7 +119,7 @@ default clock speed) a reading takes approx 1200us.
 // pins to be used to read reciever signals for each channel
 #define RX_PIN_CH0 6
 #define RX_PIN_CH1 7
-#define RX_PIN_CH2 8
+#define RX_PIN_CH2 2
 #define RX_PIN_CH3 4
 #define RX_PIN_CH4 5
 
@@ -136,5 +136,5 @@ default clock speed) a reading takes approx 1200us.
 
 #define RED_LED   13
 #define GREEN_LED 12
-#define BLUE_LED  2
+#define BLUE_LED  8
 

@@ -2,14 +2,20 @@
 // ===                          RX FUNCTIONS                                ===
 // ============================================================================
 
+byte rxPins[] = {RX_PIN_CH0, RX_PIN_CH1, RX_PIN_CH2, RX_PIN_CH3, RX_PIN_CH4};
 
 void rxInit(){
-  // initialize interface with Rx by attaching interrupts
-  PCintPort::attachInterrupt(RX_PIN_CH0, chan0, CHANGE);
-  PCintPort::attachInterrupt(RX_PIN_CH1, chan1, CHANGE);
-  PCintPort::attachInterrupt(RX_PIN_CH2, chan2, CHANGE);
-  PCintPort::attachInterrupt(RX_PIN_CH3, chan3, CHANGE);
-  PCintPort::attachInterrupt(RX_PIN_CH4, chan4, CHANGE);
+  
+  noInterrupts();
+  
+  PCICR = 1<<2;  // enable pin change interrupt for PCINT2 (pins 0 to 7)
+  
+  for(byte i=0; i<NUMBER_CHANNELS; i++){
+    DDRD   |= 0<<rxPins[i];    // set pin to INPUT
+    PCMSK2 |= 1<<rxPins[i];    // enable pin change interrupt on pin
+  }
+  
+  interrupts();
 }
 
 void rxGetNewVals(){
@@ -76,94 +82,126 @@ void rxMapping(byte updateFlags){
   }
 }
 
+// Preprocessor function for pin checking
+// Records pulse length for each Rx pin
+#define RX_PIN_CHECK(chan_num)                          \
+  if(changedPins & 1<<rxPins[chan_num]){                \
+    if(pins & 1<<rxPins[chan_num]){                     \
+      rxStart[chan_num] = now;                          \
+    }                                                   \
+    else{                                               \
+      rxValShared[chan_num] = now - rxStart[chan_num];  \
+      rxStart[chan_num] = 0;                            \
+      updateFlagsShared |= 1<<chan_num;                 \
+    }                                                   \
+  }    
+
+
+ISR(PCINT2_vect) {
+  // Pin change interrupt handler for digital pins 0 to 7
+  unsigned long now;
+  byte pins, changedPins;
+  static byte lastPins;
+  
+  pins = PIND;  // capture current pin state
+  changedPins = pins ^ lastPins;  // toggle last pin state with current state to find changes
+  now = micros();
+  lastPins = pins;    // remember pin state for next time
+  
+  for(byte i=0; i<NUMBER_CHANNELS; i++){  // check pins for changes
+    RX_PIN_CHECK(i);
+  }
+  
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void chan0()
-// Function attached to RX_PIN_CH0 interrupt.
-// Measures pulse lengths of input servo signals.
-{
-  // if pin is high, new pulse. Record time
-  if (digitalRead(RX_PIN_CH0) == HIGH)
-  {
-    rxStart[0] = micros();
-  }
-  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
-  else
-  {
-    rxValShared[0] = micros() - rxStart[0];
-    rxStart[0] = 0;
-    updateFlagsShared |= RX_FLAG_CH0;
-  }
-}
-
-void chan1()
-// Function attached to RX_PIN_CH1 interrupt.
-// Measures pulse lengths of input servo signals.
-{
-  // if pin is high, new pulse. Record time
-  if (digitalRead(RX_PIN_CH1) == HIGH)
-  {
-    rxStart[1] = micros();
-  }
-  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
-  else
-  {
-    rxValShared[1] = micros() - rxStart[1];
-    rxStart[1] = 0;
-    updateFlagsShared |= RX_FLAG_CH1;
-  }
-}
-
-void chan2()
-// Function attached to RX_PIN_CH2 interrupt.
-// Measures pulse lengths of input servo signals.
-{
-  // if pin is high, new pulse. Record time
-  if (digitalRead(RX_PIN_CH2) == HIGH)
-  {
-    rxStart[2] = micros();
-  }
-  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
-  else
-  {
-    rxValShared[2] = micros() - rxStart[2];
-    rxStart[2] = 0;
-    updateFlagsShared |= RX_FLAG_CH2;
-  }
-}
-
-void chan3()
-// Function attached to RX_PIN_CH3 interrupt.
-// Measures pulse lengths of input servo signals.
-{
-  // if pin is high, new pulse. Record time
-  if (digitalRead(RX_PIN_CH3) == HIGH)
-  {
-    rxStart[3] = micros();
-  }
-  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
-  else
-  {
-    rxValShared[3] = micros() - rxStart[3];
-    rxStart[3] = 0;
-    updateFlagsShared |= RX_FLAG_CH3;
-  }
-}
-
-void chan4()
-// Function attached to RX_PIN_CH4 interrupt.
-// Measures pulse lengths of input servo signals.
-{
-  // if pin is high, new pulse. Record time
-  if (digitalRead(RX_PIN_CH4) == HIGH)
-  {
-    rxStart[4] = micros();
-  }
-  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
-  else
-  {
-    rxValShared[4] = micros() - rxStart[4];
-    rxStart[4] = 0;
-    updateFlagsShared |= RX_FLAG_CH4;
-  }
-}
+//void chan0()
+//// Function attached to RX_PIN_CH0 interrupt.
+//// Measures pulse lengths of input servo signals.
+//{
+//  // if pin is high, new pulse. Record time
+//  if (digitalRead(RX_PIN_CH0) == HIGH)
+//  {
+//    rxStart[0] = micros();
+//  }
+//  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
+//  else
+//  {
+//    rxValShared[0] = micros() - rxStart[0];
+//    rxStart[0] = 0;
+//    updateFlagsShared |= RX_FLAG_CH0;
+//  }
+//}
+//
+//void chan1()
+//// Function attached to RX_PIN_CH1 interrupt.
+//// Measures pulse lengths of input servo signals.
+//{
+//  // if pin is high, new pulse. Record time
+//  if (digitalRead(RX_PIN_CH1) == HIGH)
+//  {
+//    rxStart[1] = micros();
+//  }
+//  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
+//  else
+//  {
+//    rxValShared[1] = micros() - rxStart[1];
+//    rxStart[1] = 0;
+//    updateFlagsShared |= RX_FLAG_CH1;
+//  }
+//}
+//
+//void chan2()
+//// Function attached to RX_PIN_CH2 interrupt.
+//// Measures pulse lengths of input servo signals.
+//{
+//  // if pin is high, new pulse. Record time
+//  if (digitalRead(RX_PIN_CH2) == HIGH)
+//  {
+//    rxStart[2] = micros();
+//  }
+//  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
+//  else
+//  {
+//    rxValShared[2] = micros() - rxStart[2];
+//    rxStart[2] = 0;
+//    updateFlagsShared |= RX_FLAG_CH2;
+//  }
+//}
+//
+//void chan3()
+//// Function attached to RX_PIN_CH3 interrupt.
+//// Measures pulse lengths of input servo signals.
+//{
+//  // if pin is high, new pulse. Record time
+//  if (digitalRead(RX_PIN_CH3) == HIGH)
+//  {
+//    rxStart[3] = micros();
+//  }
+//  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
+//  else
+//  {
+//    rxValShared[3] = micros() - rxStart[3];
+//    rxStart[3] = 0;
+//    updateFlagsShared |= RX_FLAG_CH3;
+//  }
+//}
+//
+//void chan4()
+//// Function attached to RX_PIN_CH4 interrupt.
+//// Measures pulse lengths of input servo signals.
+//{
+//  // if pin is high, new pulse. Record time
+//  if (digitalRead(RX_PIN_CH4) == HIGH)
+//  {
+//    rxStart[4] = micros();
+//  }
+//  // if pin is low, end of pulse. Calculate pulse length and add channel flag. Also reset channel start.
+//  else
+//  {
+//    rxValShared[4] = micros() - rxStart[4];
+//    rxStart[4] = 0;
+//    updateFlagsShared |= RX_FLAG_CH4;
+//  }
+//}

@@ -125,6 +125,8 @@
 
 #define NUMBER_CHANNELS 5
 
+#define RX_FLAGS 
+
 // define flags for channels in updateFlagsShared
 #define RX_FLAG_CH0 1<<0  //B00000001
 #define RX_FLAG_CH1 1<<1  //B00000010
