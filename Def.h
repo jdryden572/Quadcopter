@@ -47,7 +47,8 @@
 
 // *************ADXL435 Accelerometer***************
 
-#define ACC_SMPL_RATE 50  // 50Hz 
+#define ACC_SMPL_RATE 50  // 50Hz
+#define ACC_SMPL_TIME 1000000/ACC_SMPL_RATE  // micros
 
 #define ADXL345 0x53         // B1010011 (ADXL345)
 #define ADXL345_TO_READ 6    // read 6 bytes
@@ -60,6 +61,7 @@
 
 // **************ITG-3200 Gyro**********************
 #define GYRO_SMPL_RATE 1000  // 1000Hz
+#define GYRO_SMPL_TIME 1000000/GYRO_SMPL_RATE  // micros
 
 #define WHO_AM_I 0x00
 #define SMPLRT_DIV 0x15   // 
@@ -86,7 +88,7 @@
 // **************HMC5883L Compass*******************
 
 #define MAG_SMPL_RATE 30  // 30Hz
-#define MAG_SMPL_TIME 1000 / MAG_SMPL_RATE 
+#define MAG_SMPL_TIME 1000000 / MAG_SMPL_RATE  // micros
 
 #define HMC5883L 0x1E  // B0011110
 

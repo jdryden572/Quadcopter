@@ -30,7 +30,7 @@ float QuadPID::compute(float setPoint, float input)
 		When elapsed time is greater than 10 times the sample rate,
 		omit the D term which could cause a large output spike. Also 
 		reset errSum to zero the I term. This prevents strange behavior
-		when the throttle is lowerer below cutoff and then raised again. 
+		when the throttle is lowered below cutoff and then raised again. 
 		*/
 		if(_dt > 10*_sampleTime){
 			D = 0;
