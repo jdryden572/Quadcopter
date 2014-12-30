@@ -16,7 +16,7 @@
 //#define DEBUG_ANGLES          // print roll and pitch
 //#define DEBUG_SENSOR_RAW      // print raw sensor vals
 //#define DEBUG_MAG             // print mag readings
-#define DEBUG_RX_RAW          // print raw Rx channel values
+//#define DEBUG_RX_RAW          // print raw Rx channel values
 //#define DEBUG_RX_ANGLES       // print mapped Rx setpoints
 //#define DEBUG_PID_ROLL        // print roll PID output
 //#define DEBUG_PID_PITCH       // print pitch PID output
@@ -25,7 +25,7 @@
 //#define TEST_ROLL             // print roll setpoint and measured roll angle
 //#define LOOP_TIMER            // print loop times
 
-#define USE_SERIAL            // enable Serial even if no debugging selected
+//#define USE_SERIAL            // enable Serial even if no debugging selected
 
 // *************Alternate Motor Control***************
 

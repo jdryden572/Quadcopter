@@ -52,13 +52,6 @@ void motorInit(){
     TCCR2A |= _BV(COM2B1);  // attach pin  3 to timer 2 channel B, write with OCR2B
     
     setMotors();  // set motors to below arm
-    
-  #elif defined(USE_SERVO_LIB)
-    // attach servo objects to pins for each output channel and turn to zero throttle.
-    for (int i=0; i<4; i++){
-      motors[i].attach(channelPins[i]);
-      motors[i].writeMicroseconds(MOTOR_ARM_START-50);
-    }
   #endif
   
   // delay a half second to allow ESCs to arm
@@ -85,14 +78,6 @@ void setMotors(){
   OCR1B = motorVal[1]>>3;
   OCR2A = motorVal[2]>>3;
   OCR2B = motorVal[3]>>3;
-}
-
-#elif defined(USE_SERVO_LIB)
-void setMotors(){
-  // Motor control using Servo library at 50 Hz
-  for(byte i=0; i<4; i++){
-    motors[i].writeMicroseconds(motorVal[i]);
-  }
 }
 #endif
 
