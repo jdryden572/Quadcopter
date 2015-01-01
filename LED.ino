@@ -5,9 +5,8 @@
 
 void ledInit(){
   // initialize the LED pins for output
-  pinMode(RED_LED, OUTPUT);
-  pinMode(GREEN_LED, OUTPUT);
-  pinMode(BLUE_LED, OUTPUT);
+  // all LED pins on PORTB, pins 8 to 13
+  DDRB |= ( 1<<(R_LED) | 1<<(G_LED) | 1<<(B_LED) );
   
   // set the LED to red
   setLED(RED);
@@ -18,19 +17,16 @@ void setLED(byte color){
   
   switch(color){
     case RED:
-      digitalWrite(RED_LED, HIGH);
-      digitalWrite(GREEN_LED, LOW);
-      digitalWrite(BLUE_LED, LOW);
+      PORTB = SET_R;
       break;
     case GREEN:
-      digitalWrite(RED_LED, LOW);
-      digitalWrite(GREEN_LED, HIGH);
-      digitalWrite(BLUE_LED, LOW);
+      PORTB = SET_G;
       break;
     case BLUE:
-      digitalWrite(RED_LED, LOW);
-      digitalWrite(GREEN_LED, LOW);
-      digitalWrite(BLUE_LED, HIGH);
+      PORTB = SET_B;
+      break;
+    case PURPLE:
+      PORTB = SET_P;
       break;
   }
 }

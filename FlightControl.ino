@@ -28,6 +28,13 @@ void flightControl() {
     rxGetNewVals();
   }
   
+  if(!motorsArmed){ setLED(RED); }
+  else{
+    if(rateModeSwitch){ setLED(BLUE); }
+    else              { setLED(GREEN); }
+  }  
+  
+  
   #ifdef DEBUG_RX_RAW
   Serial.print(rxVal[CHANNEL_THROTTLE]); Serial.print('\t'); 
   Serial.print(rxVal[CHANNEL_ROLL]);     Serial.print('\t');
@@ -40,10 +47,11 @@ void flightControl() {
   // motor setpoints for each axis of motion
   int setRoll, setPitch, setYaw;
   
-    // flag for whether a disarm command was recieved last loop
+    // flag for whether arm or disarm command was recieved last loop
   static boolean disarmRequested = false;
-  // time for when disarm command was recieved
-  static unsigned long disarmRequestTime;
+  static boolean armRequested = false;
+  // time for when arm or disarm command was recieved
+  static unsigned long armRequestTime, disarmRequestTime;
   // flags for re-arming motors
   static boolean throDown = false; 
   static boolean throUp   = false;
@@ -134,26 +142,27 @@ void flightControl() {
   else{  // if motors not armed
     /* MOTOR RE-ARM CHECK
     
-    Once disarmed mid-program, motors may be re-armed by raising lowering throttle to minimum, 
-    then raising throttle to full, then returning throttle to minimum.
+    Once disarmed mid-program, motors may be re-armed by holding throttle down and yaw full 
+    right for one second.
     
     */
     
-    if(rxVal[CHANNEL_THROTTLE] < THROTTLE_CUTOFF && !throDown){  // check for min throttle first
-      throDown = true;  // save flag to proceed
+    if(rxVal[CHANNEL_YAW] < 1150){  // if yaw stick fully right while throttle is fully down
+      if(armRequested){  // if a arm request was received last loop
+        if((millis() - armRequestTime) > 1000){  // if one second has elapsed since first arm request
+          rearmMotors();        // rearm motors
+          motorsArmed = true;  
+          armRequested = false; // reset arm request flag
+        }
+      }
+      else{  // this is first arm request
+        armRequested = true;  // set flag
+        armRequestTime = millis();  // record time
+      }
     }
-    else if(rxVal[CHANNEL_THROTTLE] > THROTTLE_RMAX - 50 && throDown && !throUp){  // next check for max throttle
-      throUp = true;    // save flag to proceed
+    else{  // yaw stick not in arm position, reset flag
+      armRequested = false;
     }
-    else if(rxVal[CHANNEL_THROTTLE] < THROTTLE_CUTOFF && throUp){  // finally check for throttle back at min
-      rearmMotors();  // re-arm the motors
-      motorsArmed = true;
-      
-      // reset the motor re-arm flags
-      throDown = false;
-      throUp = false;
-    }
-     
   }
   
   // write values to motors

@@ -27,7 +27,7 @@ void motorInit(){
   Serial.print("Throttle up. ");
 
   // once throttle is raised, LED blue
-  setLED(BLUE);
+  setLED(PURPLE);
   // initialize and calibrate gyro 
   gyroInit();
   // reset LED to red when done calibrating
@@ -93,7 +93,7 @@ void disarmMotors(){
   }
   setMotors();
   
-  setLED(RED); // set LED to red
+  //setLED(RED); // set LED to red
 }
 
 void rearmMotors(){
@@ -103,6 +103,6 @@ void rearmMotors(){
   }
   setMotors();
   
-  setLED(GREEN); // set LED to green
+  //setLED(GREEN); // set LED to green
 }
 

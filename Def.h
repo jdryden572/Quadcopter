@@ -169,6 +169,12 @@
 // ===                            LED DEFS                                  ===
 // ============================================================================
 
-#define RED   0
-#define GREEN 1
-#define BLUE  2
+#define RED    0
+#define GREEN  1
+#define BLUE   2
+#define PURPLE 3
+
+#define SET_R  (1<<(R_LED-8))
+#define SET_G  (1<<(G_LED-8))
+#define SET_B  (1<<(B_LED-8))
+#define SET_P  (1<<(G_LED-8) | 1<<(B_LED-8))

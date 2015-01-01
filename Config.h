@@ -139,7 +139,7 @@ default clock speed) a reading takes approx 1200us.
 // ===                           LED CONFIG                                 ===
 // ============================================================================
 
-#define RED_LED   13
-#define GREEN_LED 12
-#define BLUE_LED  8
+#define R_LED  13
+#define G_LED  12
+#define B_LED  8
 
