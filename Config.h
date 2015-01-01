@@ -38,7 +38,7 @@
 // ===                          PID CONFIG                                  ===
 // ============================================================================
 
-#define RATE_KP 1
+#define RATE_KP 1.2
 #define RATE_KD 0
 #define RATE_KI 0
 
@@ -58,7 +58,7 @@
 #define PITCH_A_MAX 20.0  // Max pitch angle setpoint in deg. 
 #define YAW_A_MAX 60.0    // Max yaw rate setpoint in deg/s.
 
-#define RATE_RX_SCALE 3   // Multiplier for angle setpoint, for use in rate mode
+#define RATE_RX_SCALE 4.5   // Multiplier for angle setpoint, for use in rate mode
 
 
 // ============================================================================
@@ -89,7 +89,7 @@ default clock speed) a reading takes approx 1200us.
 #define ACC_OFFSET_Z -32
 
 // **************ITG-3200 Gyro**********************
-#define GYRO_CAL_SMPL_NUM 100  // average 100 readings for offset
+#define GYRO_CAL_SMPL_NUM 200  // average 100 readings for offset
 
 #define GYRO_OFFSET_X 0.42
 #define GYRO_OFFSET_Y 2.65
@@ -121,6 +121,13 @@ default clock speed) a reading takes approx 1200us.
 #define THROTTLE_CUTOFF 1050  // threshold for throttle input. Set to just above bottom stick.
 #define THROTTLE_RMAX 1860    // maximum throttle value
 
+#define RX_DEADZONE 8  // +/- deadzone in micros.
+
+// change values to -1 to reverse a channel
+#define ROLL_DIR -1
+#define PITCH_DIR -1
+#define YAW_DIR 1
+
 // pins to be used to read reciever signals for each channel
 #define RX_PIN_CH0 6
 #define RX_PIN_CH1 7
@@ -129,11 +136,11 @@ default clock speed) a reading takes approx 1200us.
 #define RX_PIN_CH4 5
 
 // which channel corresponds to which input
-#define CHANNEL_THROTTLE 0
-#define CHANNEL_ROLL 1
-#define CHANNEL_PITCH 2
-#define CHANNEL_YAW 3
-#define CHANNEL_AUX 4
+#define THRO 0
+#define ROLL 1
+#define PITCH 2
+#define YAW 3
+#define AUX 4
 
 // ============================================================================
 // ===                           LED CONFIG                                 ===

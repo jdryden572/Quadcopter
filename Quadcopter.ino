@@ -33,7 +33,7 @@ unsigned long rxStart[NUMBER_CHANNELS];
 // define global Rx value variable
 int rxVal[NUMBER_CHANNELS];
 // variables for Rx desired setpoints
-float rxThro, rxRoll, rxPitch, rxYaw;
+float rxAngle[4];
 // variable for rate mode switch state
 boolean rateModeSwitch = false;
 

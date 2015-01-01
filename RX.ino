@@ -45,6 +45,22 @@ void rxGetNewVals(){
   rxMapping(updateFlags);
 }
 
+// Rx Mapping function
+// uses deadzone for values just above or below 1500
+#define MAP_RX_VAL(channel, dir, mult, sub, maxVal)                          \ 
+  if(rxVal[channel] > 1500+RX_DEADZONE){                                     \
+    rxAngle[channel] = dir*((float)(rxVal[channel]-RX_DEADZONE)*mult - sub); \
+    rxAngle[channel] = constrain(rxAngle[channel], -maxVal, maxVal);         \
+  }                                                                          \
+  else if(rxVal[channel] < 1500-RX_DEADZONE){                                \
+    rxAngle[channel] = dir*((float)(rxVal[channel]+RX_DEADZONE)*mult - sub); \
+    rxAngle[channel] = constrain(rxAngle[channel], -maxVal, maxVal);         \
+  }                                                                          \
+  else{                                                                      \
+    rxAngle[channel] = 0;                                                    \
+  }
+
+
 void rxMapping(byte updateFlags){
   // -----------------------Rx Value Mapper Function--------------------------
   /* 
@@ -56,24 +72,21 @@ void rxMapping(byte updateFlags){
   because it runs faster.
   */
   
-  if(updateFlags & 1<<CHANNEL_THROTTLE){  // New throttle value
+  if(updateFlags & 1<<THRO){  // New throttle value
     // map throttle values directly 
-    rxThro = map(rxVal[CHANNEL_THROTTLE], THROTTLE_CUTOFF, THROTTLE_RMAX, THROTTLE_WMIN, THROTTLE_WMAX);
+    rxAngle[THRO] = map(rxVal[THRO], THROTTLE_CUTOFF, THROTTLE_RMAX, THROTTLE_WMIN, THROTTLE_WMAX);
   }
-  if(updateFlags & 1<<CHANNEL_ROLL){  // New roll
-    rxRoll  = (float)rxVal[CHANNEL_ROLL]*ROLL_RX_MULT - ROLL_RX_SUB;
-    rxRoll  = constrain(rxRoll, -ROLL_A_MAX, ROLL_A_MAX);
+  if(updateFlags & 1<<ROLL){  // New roll 
+    MAP_RX_VAL(ROLL, ROLL_DIR, ROLL_RX_MULT, ROLL_RX_SUB, ROLL_A_MAX);
   }
-  if(updateFlags & 1<<CHANNEL_PITCH){  // New pitch
-    rxPitch = (float)rxVal[CHANNEL_PITCH]*PITCH_RX_MULT - PITCH_RX_SUB;
-    rxPitch = constrain(rxPitch, -PITCH_A_MAX, PITCH_A_MAX);
+  if(updateFlags & 1<<PITCH){  // New pitch
+    MAP_RX_VAL(PITCH, PITCH_DIR, PITCH_RX_MULT, PITCH_RX_SUB, PITCH_A_MAX);
   }
-  if(updateFlags & 1<<CHANNEL_YAW){  // New yaw
-    rxYaw   = (float)rxVal[CHANNEL_YAW]*YAW_RX_MULT - YAW_RX_SUB;
-    rxYaw   = constrain(rxYaw, -YAW_A_MAX, YAW_A_MAX);
+  if(updateFlags & 1<<YAW){  // New yaw
+    MAP_RX_VAL(YAW, YAW_DIR, YAW_RX_MULT, YAW_RX_SUB, YAW_A_MAX);
   }
-  if(updateFlags & 1<<CHANNEL_AUX){  // New aux
-    if(rxVal[CHANNEL_AUX] > 1500) { 
+  if(updateFlags & 1<<AUX){  // New aux
+    if(rxVal[AUX] > 1500) { 
       rateModeSwitch = true; 
     }
     else {

@@ -20,10 +20,10 @@ void motorInit(){
   // pause program until motors armed.
   Serial.print("Motors safe. "); 
   
-  while(rxValShared[CHANNEL_THROTTLE] > THROTTLE_CUTOFF){ }
+  while(rxValShared[THRO] > THROTTLE_CUTOFF){ }
   Serial.println("Throttle down. ");
 
-  while(rxValShared[CHANNEL_THROTTLE] < THROTTLE_RMAX-50){ }
+  while(rxValShared[THRO] < THROTTLE_RMAX-50){ }
   Serial.print("Throttle up. ");
 
   // once throttle is raised, LED blue
@@ -33,7 +33,7 @@ void motorInit(){
   // reset LED to red when done calibrating
   setLED(RED);
 
-  while(rxValShared[CHANNEL_THROTTLE] > THROTTLE_CUTOFF){ }
+  while(rxValShared[THRO] > THROTTLE_CUTOFF){ }
   Serial.println("Throttle down. MOTORS ARMED!");
   setLED(GREEN);  // motors armed, LED green
   motorsArmed = true;  // set arming flag
