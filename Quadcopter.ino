@@ -11,6 +11,7 @@ For Penn State ME 445 - Microcomputer Interfacing
 
 
 #include <Wire.h>
+#include <EEPROM.h>
 #include <QuadPID.h>
 #include "Config.h"
 #include "Def.h"

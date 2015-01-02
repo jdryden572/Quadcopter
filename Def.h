@@ -66,6 +66,11 @@
 #define ADXL345_DATA_RATE B00001001 // Set sample rate to 50Hz
 #define ADXL345_DATA_FORMAT_W 0x0B  // set to full resolution and +/- 16g
 
+// EEPROM indices for accel calibration values
+#define ACC_X_OFFSET 0
+#define ACC_Y_OFFSET 1
+#define ACC_Z_OFFSET 2
+
 
 // **************ITG-3200 Gyro**********************
 #define GYRO_SMPL_RATE 1000  // 1000Hz
@@ -172,9 +177,9 @@
 #define RED    0
 #define GREEN  1
 #define BLUE   2
-#define PURPLE 3
+#define TEAL 3
 
 #define SET_R  (1<<(R_LED-8))
 #define SET_G  (1<<(G_LED-8))
 #define SET_B  (1<<(B_LED-8))
-#define SET_P  (1<<(G_LED-8) | 1<<(B_LED-8))
+#define SET_T  (1<<(G_LED-8) | 1<<(B_LED-8))

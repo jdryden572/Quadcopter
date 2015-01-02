@@ -27,7 +27,7 @@ void motorInit(){
   Serial.print("Throttle up. ");
 
   // once throttle is raised, LED blue
-  setLED(PURPLE);
+  setLED(TEAL);
   // initialize and calibrate gyro 
   gyroInit();
   // reset LED to red when done calibrating

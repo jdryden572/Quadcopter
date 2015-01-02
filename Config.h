@@ -14,7 +14,7 @@
 // *****************Debug Printing********************
 
 //#define DEBUG_ANGLES          // print roll and pitch
-//#define DEBUG_SENSOR_RAW      // print raw sensor vals
+#define DEBUG_SENSOR_RAW      // print raw sensor vals
 //#define DEBUG_MAG             // print mag readings
 //#define DEBUG_RX_RAW          // print raw Rx channel values
 //#define DEBUG_RX_ANGLES       // print mapped Rx setpoints
@@ -82,7 +82,7 @@ default clock speed) a reading takes approx 1200us.
 
 // *************ADXL435 Accelerometer***************
 //#define CALIBRATE_ACC
-#define ACC_CAL_SMPL_NUM 50
+#define ACC_CAL_SMPL_NUM 100
 
 #define ACC_OFFSET_X -12
 #define ACC_OFFSET_Y -15

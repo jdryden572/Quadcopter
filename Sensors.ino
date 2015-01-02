@@ -39,39 +39,83 @@ void accInit(){
   
   delay(500);
   
-  #if defined CALIBRATE_ACC
-    // calibration variables
-    float accXReadings, accYReadings, accZReadings;
-    
-    Serial.print("Calibrating Accelerometer... ");
-    
-    for (byte i=0; i<ACC_CAL_SMPL_NUM; i++){
-      updateAcc();
-      accXReadings += accX;
-      accYReadings += accY;
-      accZReadings += accZ;
-      delay(1000/ACC_SMPL_RATE);
-    }
-    
-    delay(250);
-    
-    accXOffset = (int)(accXReadings/ACC_CAL_SMPL_NUM + 0.5);
-    accYOffset = (int)(accYReadings/ACC_CAL_SMPL_NUM + 0.5);
-    accZOffset = (int)(accZReadings/ACC_CAL_SMPL_NUM - 250 + 0.5);
-    
-    Serial.println("Done.");   
-    
-    Serial.println(accZReadings);
-    
-    Serial.print(accXOffset); Serial.print('\t');
-    Serial.print(accYOffset); Serial.print('\t');
-    Serial.println(accZOffset); 
-  #else
-    accXOffset = ACC_OFFSET_X;
-    accYOffset = ACC_OFFSET_Y;
-    accZOffset = ACC_OFFSET_Z;
-  #endif
+  accXOffset = EEPROM.read(ACC_X_OFFSET) - 128;
+  accYOffset = EEPROM.read(ACC_Y_OFFSET) - 128;
+  accZOffset = EEPROM.read(ACC_Z_OFFSET) - 128;
+  
+  Serial.print(accXOffset); Serial.print('\t');
+  Serial.print(accYOffset); Serial.print('\t');
+  Serial.println(accZOffset);
+  
+//  #if defined CALIBRATE_ACC
+//    // calibration variables
+//    float accXReadings, accYReadings, accZReadings;
+//    
+//    Serial.print("Calibrating Accelerometer... ");
+//    
+//    for (byte i=0; i<ACC_CAL_SMPL_NUM; i++){
+//      updateAcc();
+//      accXReadings += accX;
+//      accYReadings += accY;
+//      accZReadings += accZ;
+//      delay(1000/ACC_SMPL_RATE);
+//    }
+//    
+//    delay(250);
+//    
+//    accXOffset = (int)(accXReadings/ACC_CAL_SMPL_NUM + 0.5);
+//    accYOffset = (int)(accYReadings/ACC_CAL_SMPL_NUM + 0.5);
+//    accZOffset = (int)(accZReadings/ACC_CAL_SMPL_NUM - 250 + 0.5);
+//    
+//    Serial.println("Done.");   
+//    
+//    Serial.println(accZReadings);
+//    
+//    Serial.print(accXOffset); Serial.print('\t');
+//    Serial.print(accYOffset); Serial.print('\t');
+//    Serial.println(accZOffset); 
+//  #else
+//    accXOffset = ACC_OFFSET_X;
+//    accYOffset = ACC_OFFSET_Y;
+//    accZOffset = ACC_OFFSET_Z;
+//  #endif
 }
+
+void calibrateAcc(){
+  float accXR, accYR, accZR;
+  
+  Serial.print("Calibrating Accelerometer... ");
+  
+  for(byte i=0; i<ACC_CAL_SMPL_NUM; i++){
+    updateAcc();
+    accXR += accX;
+    accYR += accY;
+    accZR += accZ;
+    delay(1000/ACC_SMPL_RATE);
+  }
+  
+  delay(250);
+  
+  accXOffset = (int)(accXR/ACC_CAL_SMPL_NUM + 0.0);
+  accYOffset = (int)(accYR/ACC_CAL_SMPL_NUM + 0.0);
+  accZOffset = (int)(accZR/ACC_CAL_SMPL_NUM - 250 + 0.5);  
+  
+  Serial.println("Done.");
+  
+  Serial.println(accZR);
+  
+  Serial.print(accXOffset); Serial.print('\t');
+  Serial.print(accYOffset); Serial.print('\t');
+  Serial.println(accZOffset);
+  
+  EEPROM.write(ACC_X_OFFSET, accXOffset+128);
+  EEPROM.write(ACC_Y_OFFSET, accYOffset+128);
+  EEPROM.write(ACC_Z_OFFSET, accZOffset+128);
+  
+  Serial.println("Saved to EEPROM");
+  
+}
+  
 
 
 void gyroInit(){

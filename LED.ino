@@ -25,8 +25,8 @@ void setLED(byte color){
     case BLUE:
       PORTB = SET_B;
       break;
-    case PURPLE:
-      PORTB = SET_P;
+    case TEAL:
+      PORTB = SET_T;
       break;
   }
 }
