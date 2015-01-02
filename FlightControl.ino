@@ -18,15 +18,9 @@ void flightControl() {
   /*
   -------------------------FLIGHT CONTROL SEQUENCE-----------------------------
   
-  Calls functions to update Rx values, calculate motor control values, and 
+  Calls functions to calculate motor control values, and 
   sends values to the motors.
   */
-  
-  // Check if any new inputs have been received
-  if (updateFlagsShared){
-    // get any new RC inputs
-    rxGetNewVals();
-  }
   
   if(!motorsArmed){ setLED(RED); }
   else{

@@ -2,6 +2,38 @@
 // ===                        MOTOR FUNCTIONS                               ===
 // ============================================================================
 
+
+void firstArm(){
+  static boolean throDown, throUp;
+  
+  if(throDown){
+    if(throUp){
+      if(rxVal[THRO] < THROTTLE_CUTOFF){
+        motorInit();
+        firstArmComplete = true;
+        
+        #ifndef USE_SERIAL
+          Serial.end();
+        #endif
+      }
+    }
+    else{
+      if(rxVal[THRO] > THROTTLE_RMAX-50){
+        throUp = true;
+        Serial.print("Throttle up. ");
+        calibrateGyro();
+      }
+    }
+  }
+  else{
+    if(rxVal[THRO] < THROTTLE_CUTOFF){
+      throDown = true;
+      Serial.println("Throttle down. ");
+    }
+  }
+}
+
+
 void motorInit(){
   /*
   -------------------------MOTOR INITIALIZATION--------------------------------
@@ -17,42 +49,43 @@ void motorInit(){
   
   byte channelPins[] = {OUTPUT_PIN_M0, OUTPUT_PIN_M1, OUTPUT_PIN_M2, OUTPUT_PIN_M3};
   
-  // pause program until motors armed.
-  Serial.print("Motors safe. "); 
-  
-  while(rxValShared[THRO] > THROTTLE_CUTOFF){ }
-  Serial.println("Throttle down. ");
+//  // pause program until motors armed.
+//  Serial.print("Motors safe. "); 
+//  
+//  while(rxValShared[THRO] > THROTTLE_CUTOFF){ }
+//  Serial.println("Throttle down. ");
+//
+//  while(rxValShared[THRO] < THROTTLE_RMAX-50){ }
+//  Serial.print("Throttle up. ");
+//
+//  // once throttle is raised, LED blue
+//  setLED(TEAL);
+//  // initialize and calibrate gyro 
+//  gyroInit();
+//  // reset LED to red when done calibrating
+//  setLED(RED);
+//
+//  while(rxValShared[THRO] > THROTTLE_CUTOFF){ }
+//  Serial.println("Throttle down. MOTORS ARMED!");
 
-  while(rxValShared[THRO] < THROTTLE_RMAX-50){ }
-  Serial.print("Throttle up. ");
-
-  // once throttle is raised, LED blue
-  setLED(TEAL);
-  // initialize and calibrate gyro 
-  gyroInit();
-  // reset LED to red when done calibrating
-  setLED(RED);
-
-  while(rxValShared[THRO] > THROTTLE_CUTOFF){ }
-  Serial.println("Throttle down. MOTORS ARMED!");
   setLED(GREEN);  // motors armed, LED green
   motorsArmed = true;  // set arming flag
 
-  #if defined(USE_MOTOR_PWM)
-    // set each motor pin to output for PWM
-    for(byte i=0; i<4; i++){
-      pinMode(channelPins[i], OUTPUT);
-      motorVal[i] = MOTOR_ARM_START - 50;  // also set the motor setpoint below arm
-    }
+
+  // set each motor pin to output for PWM
+  for(byte i=0; i<4; i++){
+    pinMode(channelPins[i], OUTPUT);
+    motorVal[i] = MOTOR_ARM_START - 50;  // also set the motor setpoint below arm
+  }
+  
+  // Initialize PWM on each pin
+  TCCR1A |= _BV(COM1A1);  // attach pin  9 to timer 1 channel A, write with OCR1A
+  TCCR1A |= _BV(COM1B1);  // attach pin 10 to timer 1 channel B, write with OCR1B
+  TCCR2A |= _BV(COM2A1);  // attach pin 11 to timer 2 channel A, write with OCR2A
+  TCCR2A |= _BV(COM2B1);  // attach pin  3 to timer 2 channel B, write with OCR2B
     
-    // Initialize PWM on each pin
-    TCCR1A |= _BV(COM1A1);  // attach pin  9 to timer 1 channel A, write with OCR1A
-    TCCR1A |= _BV(COM1B1);  // attach pin 10 to timer 1 channel B, write with OCR1B
-    TCCR2A |= _BV(COM2A1);  // attach pin 11 to timer 2 channel A, write with OCR2A
-    TCCR2A |= _BV(COM2B1);  // attach pin  3 to timer 2 channel B, write with OCR2B
-    
-    setMotors();  // set motors to below arm
-  #endif
+  setMotors();  // set motors to below arm
+
   
   // delay a half second to allow ESCs to arm
   delay(500);

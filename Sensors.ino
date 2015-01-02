@@ -15,11 +15,7 @@ void sensorInit(){
   #endif
   
   accInit();
-  
-  #if !defined(ARMED)
-    // if ARMED, gyroInit will be called in motorInit
-    gyroInit();  // if not ARMED, initialize gyro
-  #endif
+  gyroInit();
   
   #ifdef MAG
     magInit();
@@ -36,8 +32,6 @@ void accInit(){
   
   writeToSensor(ADXL345, ADXL345_DATA_FORMAT, ADXL345_DATA_FORMAT_W);  // set resolution
   writeToSensor(ADXL345, ADXL345_BW_RATE, ADXL345_DATA_RATE);  // set bandwidth
-  
-  delay(500);
   
   accXOffset = EEPROM.read(ACC_X_OFFSET) - 128;
   accYOffset = EEPROM.read(ACC_Y_OFFSET) - 128;
@@ -84,6 +78,8 @@ void accInit(){
 void calibrateAcc(){
   float accXR, accYR, accZR;
   
+  setLED(TEAL);
+  
   Serial.print("Calibrating Accelerometer... ");
   
   for(byte i=0; i<ACC_CAL_SMPL_NUM; i++){
@@ -114,6 +110,7 @@ void calibrateAcc(){
   
   Serial.println("Saved to EEPROM");
   
+  setLED(RED);
 }
   
 
@@ -125,42 +122,37 @@ void gyroInit(){
   writeToSensor(ITG3200, DLPF_FS, (DLPF_FS_SEL_1 | DLPF_FS_SEL_0 | DLPF_CFG_2 | DLPF_CFG_1 | DLPF_CFG_0));
   // set the gyro sample rate
   writeToSensor(ITG3200, SMPLRT_DIV, SMPLRT_DIV_VAL);
-  
-  delay(1000); // give the quad time to settle
-  
-  #ifndef OVERRIDE_GYRO_CALIBRATE
+}
+
+
+void calibrateGyro(){
   // Calibrate the gyro offset by taking readings and averaging them
   
-    // Calibration variables
-    float gyroXReadings, gyroYReadings, gyroZReadings;
+  // Calibration variables
+  float gyroXReadings, gyroYReadings, gyroZReadings;
   
-    Serial.print("Calibrating Gyro... ");
+  setLED(TEAL);
+
+  Serial.print("Calibrating Gyro... ");
   
-    for (byte i=0; i<GYRO_CAL_SMPL_NUM; i++){
-      updateGyro();
-      gyroXReadings += gyroX;
-      gyroYReadings += gyroY;
-      gyroZReadings += gyroZ;
-      delay(1000/GYRO_SMPL_RATE);
-    }
+  for (byte i=0; i<GYRO_CAL_SMPL_NUM; i++){
+    updateGyro();
+    gyroXReadings += gyroX;
+    gyroYReadings += gyroY;
+    gyroZReadings += gyroZ;
+    delay(1000/GYRO_SMPL_RATE);
+  }
     
-    gyroXOffset = gyroXReadings / GYRO_CAL_SMPL_NUM;
-    gyroYOffset = gyroYReadings / GYRO_CAL_SMPL_NUM;
-    gyroZOffset = gyroZReadings / GYRO_CAL_SMPL_NUM;
-    
-    
-    Serial.println("Done.");
-    Serial.print(gyroXOffset); Serial.print('\t');
-    Serial.print(gyroYOffset); Serial.print('\t');
-    Serial.println(gyroZOffset);
-    
-  #endif
+  gyroXOffset = gyroXReadings / GYRO_CAL_SMPL_NUM;
+  gyroYOffset = gyroYReadings / GYRO_CAL_SMPL_NUM;
+  gyroZOffset = gyroZReadings / GYRO_CAL_SMPL_NUM;
+      
+  Serial.println("Done.");
+  Serial.print(gyroXOffset); Serial.print('\t');
+  Serial.print(gyroYOffset); Serial.print('\t');
+  Serial.println(gyroZOffset);
   
-  #ifdef OVERRIDE_GYRO_CALIBRATE  
-    gyroXOffset = GYRO_OFFSET_X;
-    gyroYOffset = GYRO_OFFSET_Y;
-    gyroZOffset = GYRO_OFFSET_Z;
-  #endif
+  setLED(RED);
 }
 
 

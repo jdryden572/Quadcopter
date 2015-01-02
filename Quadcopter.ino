@@ -45,6 +45,7 @@ int motorVal[4];
 
 // global arming variable for motors
 boolean motorsArmed = false;
+boolean firstArmComplete = false;
 
 // ----------Sensor Globals------------------
 
@@ -92,23 +93,17 @@ void setup() {
   // initialize sensors. Includes gyro only if ARMED not defined
   sensorInit();
   
-  #ifdef MAG
-  magInit();
-  #endif
-  
   // initialize Rx interface
   rxInit();
   // delay to allow Rx readings to begin
   delay(100);
   
-  #ifdef ARMED
-    // initialize the motors. This begins arming sequence
-    motorInit();
-  #endif
+//  #ifdef ARMED
+//    // initialize the motors. This begins arming sequence
+//    motorInit();
+//  #endif
   
-  #ifndef USE_SERIAL
-    Serial.end();
-  #endif
+  
 }
 
 // ============================================================================
@@ -120,11 +115,20 @@ void loop() {
   // update sensor readings and state estimation
   updateSensors();
   updateStateEst();
-
+  
+  
+  // Check if any new inputs have been received
+  if (updateFlagsShared){
+    rxGetNewVals();
+  }
   
   #ifdef ARMED
-  // update Rx control and motors
-  flightControl();
+  if(!firstArmComplete){
+    firstArm();
+  }
+  else{
+    flightControl();  // update Rx control and motors
+  }
   #endif
 
   
